@@ -6,7 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Surfryder/Start and End Screens/Start Screen.unity
+    guid: 279c288d11eb841ae99fc7884e96596d
+  - enabled: 1
+    path: Assets/Surfryder/GameManager/Manager Scene.unity
+    guid: 78135cd3a314145a0ab7c433f9997620
+  - enabled: 1
+    path: Assets/Surfryder/Start and End Screens/End Screen.unity
+    guid: 2dff9bb01d8a740c7b80f2f27b8b5d84
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
