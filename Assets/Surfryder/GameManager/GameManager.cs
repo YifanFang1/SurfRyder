@@ -11,6 +11,12 @@ public class GameManager : MonoBehaviour
 
     public bool gameOver = false;
 
+    public static GameManager gameManger { get; private set; }
+
+    void Awake() {
+        gameManger = this;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -25,7 +31,6 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate() {
         if(gameOver) return;
-
 
     }
 }
