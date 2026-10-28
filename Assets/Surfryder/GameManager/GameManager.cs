@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     public bool gameOver = false;
 
-    public static GameManager gameManger { get; private set; }
+    public static GameManager gameManger { get; set; }
 
     void Awake() {
         gameManger = this;

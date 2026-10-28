@@ -5,7 +5,7 @@ public class Obstacle : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Debug.Log(GameManager.gameManger.forwardVelocity);
+        // Debug.Log(GameManager.gameManger.forwardVelocity);
     }
 
     // Update is called once per frame
