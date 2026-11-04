@@ -603,12 +603,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
-      propertyPath: brakeForce
-      value: 4
+      propertyPath: boostForce
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
-      propertyPath: forwardAcceleration
-      value: 1
+      propertyPath: boostSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: slowDownForce
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

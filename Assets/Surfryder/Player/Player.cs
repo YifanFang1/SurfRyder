@@ -10,25 +10,39 @@ public class Player : MonoBehaviour
     [SerializeField] bool isGrounded;
     [SerializeField] float leftRight = 0.0f;
 
-    [Header("Vars")]
+    [Header("Forward")]
     [SerializeField] float forwardSpeed;
     [SerializeField] float forwardAcceleration;
+
+    [Header("Brakes")]
     [SerializeField] float brakeSpeed;
     [SerializeField] float brakeForce;
+
+    [Header("Boost")]
+    [SerializeField] float boostSpeed;
+    [SerializeField] float boostForce;
+    [SerializeField] float slowDownForce;
+
+    [Header("Turning")]
     [SerializeField] float sidewaysSpeed;
     [SerializeField] float sidewaysAcceleration;
+
+    [Header("Jump")]
     [SerializeField] float jumpForce;
+
+    [Header("Bouyant")]
     [SerializeField] float bouyantConstant;
     [SerializeField] float bouyantDamping;
-    [SerializeField] float gravityForce;
     Rigidbody rb;
     PlayerInput playerInput;
+    bool boosting = false;
     InputAction boostAction, brakeAction, diveAction;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         playerInput = GetComponent<PlayerInput>();
+
         boostAction = playerInput.actions["Boost"];
         brakeAction = playerInput.actions["Brake"];
         diveAction = playerInput.actions["Dive"];
@@ -42,11 +56,16 @@ public class Player : MonoBehaviour
         MoveForward();
         Steer();
 
-        if(brakeAction.IsPressed()) {Braking(); Debug.Log("Braking");}
+        if(brakeAction.IsPressed()) {Braking();}
+        
+        if(boostAction.IsPressed()) {
+            Boost();
+            boosting = true;
+        }
+        else { boosting = false; }
 
         manager.SetSideWaysSpeed(sidewaysVelocity);
         manager.SetForwardSpeed(forwardVelocity);
-
     }
 
     void OnLeftRight(InputValue value) {
@@ -66,8 +85,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnBoost(){
-
+    void Boost(){
+        if (forwardVelocity < boostSpeed)
+        {
+            forwardVelocity += boostForce;
+        }
     }
 
     void OnDive(){
@@ -81,8 +103,6 @@ public class Player : MonoBehaviour
 
     void WaterPhysics()
     {
-        rb.AddForce(Vector3.down * gravityForce, ForceMode.Force);
-
         if(transform.position.y < -0.01f)
         {
             float bouyantForce = -transform.position.y * bouyantConstant - bouyantDamping * rb.linearVelocity.y;
@@ -97,14 +117,22 @@ public class Player : MonoBehaviour
         {
             forwardVelocity += forwardAcceleration;
         }
+        if (forwardVelocity > forwardSpeed && !boosting)
+        {
+            forwardVelocity -= slowDownForce;
+        }
+
     }
 
     void Steer()
-    {
-        
+    {   
         if(Mathf.Abs(sidewaysVelocity) < sidewaysSpeed)
         {
             sidewaysVelocity += leftRight * sidewaysAcceleration;
+        }
+        if (leftRight == 0)
+        {
+            sidewaysVelocity += Math.Sign(-sidewaysVelocity) * sidewaysAcceleration;
         }
     }
 }
