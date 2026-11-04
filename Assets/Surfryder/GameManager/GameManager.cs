@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     void FixedUpdate() {
         if(gameOver) return;
         
-        // Debug.Log(sidewaysVelocity);
+        // some kind of coroutine that creates obstacles and collectables at a set interval
     }
 
     public void SetSideWaysSpeed(float input) {

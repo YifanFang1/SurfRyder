@@ -37,6 +37,14 @@ public class Player : MonoBehaviour
     PlayerInput playerInput;
     bool boosting = false;
     InputAction boostAction, brakeAction, diveAction;
+     
+    [Header("Heat and Energy Meters")]
+    public bool isInSun; // assume this bool will state whether the player is in the sunlight 
+
+    // make a heat gauge : increases when in sun and boosting, decreases in shadow
+    // make a energy gauge : increases in sun, decreases in shadow and boosting
+    // make max capacity vars for each
+    // make increase and decrease rate vars for each
 
     void Awake()
     {
@@ -135,4 +143,7 @@ public class Player : MonoBehaviour
             sidewaysVelocity += Math.Sign(-sidewaysVelocity) * sidewaysAcceleration;
         }
     }
+
+    // void EnergyGauge() { update gauge values }
+    // void HeatGauge() { update gauge values }
 }
