@@ -141,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4767476318713744762, guid: 987a17195d81549afacc49ef17499410, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4767476318713744762, guid: 987a17195d81549afacc49ef17499410, type: 3}
       propertyPath: m_LocalRotation.w
@@ -181,6 +181,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 339712484487607135, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
   m_PrefabInstance: {fileID: 6906092306284960410}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &600674870
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600674865}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &614056763
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,7 +639,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 654853421563791151, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
       propertyPath: m_Name
-      value: Obstacle
+      value: ObstacleBasic
       objectReference: {fileID: 0}
     - target: {fileID: 6012532491687269533, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -720,7 +741,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 339712484487607135, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 600674870}
   m_SourcePrefab: {fileID: 100100000, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

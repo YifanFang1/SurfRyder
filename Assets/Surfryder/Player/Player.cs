@@ -7,8 +7,8 @@ public class Player : MonoBehaviour
     [Header("Speedometer (Don't Touch!)")]
     [SerializeField] float forwardVelocity;
     [SerializeField] float sidewaysVelocity;
-    [SerializeField] bool isGrounded;
     [SerializeField] float leftRight = 0.0f;
+    [SerializeField] bool isGrounded;
 
     [Header("Forward")]
     [SerializeField] float forwardSpeed;
