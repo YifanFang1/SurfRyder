@@ -34,6 +34,15 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate() {
         if(gameOver) return;
+        
+        // Debug.Log(sidewaysVelocity);
+    }
 
+    public void SetSideWaysSpeed(float input) {
+        sidewaysVelocity = input;
+    }
+
+    public void SetForwardSpeed(float input) {
+        forwardVelocity = input;
     }
 }

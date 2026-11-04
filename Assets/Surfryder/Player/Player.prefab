@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1037699047436240405}
   - component: {fileID: 6577337817236868518}
   - component: {fileID: 1912942979310832380}
+  - component: {fileID: 5546765065251491465}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -48,8 +49,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   forwardVelocity: 0
   sidewaysVelocity: 0
+  isGrounded: 0
+  leftRight: 0
   forwardSpeed: 10
+  forwardAcceleration: 0
+  brakeSpeed: 5
+  brakeForce: 1
   sidewaysSpeed: 10
+  jumpForce: 30
+  bouyantConstant: 15
+  bouyantDamping: 5
+  gravityForce: 9.8
 --- !u!114 &1912942979310832380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +90,33 @@ MonoBehaviour:
   m_DefaultActionMap: Default
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!54 &5546765065251491465
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339712484487607135}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1225550440081711637
 GameObject:
   m_ObjectHideFlags: 0
