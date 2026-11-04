@@ -631,6 +631,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ObstacleBasic
       objectReference: {fileID: 0}
+    - target: {fileID: 5216411697914914549, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
+      propertyPath: m_Size.x
+      value: 3.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216411697914914549, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
+      propertyPath: m_Size.y
+      value: 16.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216411697914914549, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
+      propertyPath: m_Size.z
+      value: 2.96
+      objectReference: {fileID: 0}
     - target: {fileID: 6012532491687269533, guid: 51e6d46a603f643828b90e523907fe1b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.55373

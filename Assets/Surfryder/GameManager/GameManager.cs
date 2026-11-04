@@ -48,4 +48,9 @@ public class GameManager : MonoBehaviour
     public void SetForwardSpeed(float input) {
         forwardVelocity = input;
     }
+
+    public void GameOver()
+    {
+        gameOver = true;
+    }
 }

@@ -28,4 +28,13 @@ public class Obstacle : MonoBehaviour
 
         transform.Translate(movement * Time.fixedDeltaTime, Space.World);
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            Debug.Log("Collision");
+            GameManager.gameManager.GameOver();
+        }
+    }
 }
