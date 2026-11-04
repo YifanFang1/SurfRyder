@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Obstacles")]
     [SerializeField] GameObject[] obstacleList;
+    
+    [Header("Collectable")]
+    [SerializeField] GameObject collectable;
 
     [Header("GameState")]
     public bool gameOver = false;
@@ -34,6 +37,20 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate() {
         if(gameOver) return;
+        
+        // Debug.Log(sidewaysVelocity);
+    }
 
+    public void SetSideWaysSpeed(float input) {
+        sidewaysVelocity = input;
+    }
+
+    public void SetForwardSpeed(float input) {
+        forwardVelocity = input;
+    }
+
+    public void GameOver()
+    {
+        gameOver = true;
     }
 }

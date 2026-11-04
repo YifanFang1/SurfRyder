@@ -8,22 +8,12 @@
             "actions": [
                 {
                     "name": "LeftRight",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "09c13379-d2ae-48b1-9ecd-ca492e82217d",
-                    "expectedControlType": "",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
-                },
-                {
-                    "name": "Forward",
-                    "type": "Button",
-                    "id": "bbef2c2a-ea05-45af-b2f3-37282491d725",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
                     "priority": 0
                 },
                 {
@@ -33,7 +23,7 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
                     "priority": 0
                 },
                 {
@@ -43,7 +33,7 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
                     "priority": 0
                 },
                 {
@@ -53,7 +43,7 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
                     "priority": 0
                 },
                 {
@@ -104,7 +94,7 @@
                 {
                     "name": "",
                     "id": "ed2159e4-d513-428c-8740-eafa75d14301",
-                    "path": "<Keyboard>/downArrow",
+                    "path": "<Keyboard>/rightShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -114,19 +104,8 @@
                 },
                 {
                     "name": "",
-                    "id": "f3ae9908-cbd7-41b9-8ba7-c175d4458128",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Forward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c18fd296-9265-4351-b993-fb71f8f732e7",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -137,7 +116,7 @@
                 {
                     "name": "",
                     "id": "388a5528-ede6-4a72-9c54-89d6d76b7670",
-                    "path": "<Keyboard>/s",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

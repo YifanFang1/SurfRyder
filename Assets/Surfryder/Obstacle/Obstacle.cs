@@ -15,7 +15,26 @@ public class Obstacle : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (GameManager.gameManager.gameOver) return;
+
         forwardVelocity = GameManager.gameManager.forwardVelocity;
         sidewaysVelocity = GameManager.gameManager.sidewaysVelocity;
+
+        Vector3 movement = new Vector3(
+            -sidewaysVelocity,
+            0f,
+            -forwardVelocity
+        );
+
+        transform.Translate(movement * Time.fixedDeltaTime, Space.World);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            Debug.Log("Collision");
+            GameManager.gameManager.GameOver();
+        }
     }
 }
