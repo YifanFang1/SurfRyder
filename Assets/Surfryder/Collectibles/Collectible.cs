@@ -19,6 +19,7 @@ public class Collectible : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.gameManager.gameOver) return;
         transform.Rotate(Vector3.up, spinSpeed*Time.deltaTime, Space.World);
         transform.localPosition = startPos + Vector3.up*Mathf.Sin(Time.time*bobSpeed)*bobHeight;
     }
