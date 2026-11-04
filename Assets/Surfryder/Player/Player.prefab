@@ -55,6 +55,9 @@ MonoBehaviour:
   forwardAcceleration: 1
   brakeSpeed: 5
   brakeForce: 4
+  boostSpeed: 40
+  boostForce: 5
+  slowDownForce: 3
   sidewaysSpeed: 10
   sidewaysAcceleration: 1
   jumpForce: 10
