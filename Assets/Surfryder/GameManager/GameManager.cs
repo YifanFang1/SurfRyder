@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Obstacles")]
     [SerializeField] GameObject[] obstacleList;
+    
+    [Header("Collectable")]
+    [SerializeField] GameObject collectable;
 
     [Header("GameState")]
     public bool gameOver = false;
