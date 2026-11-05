@@ -27,6 +27,8 @@ public class Obstacle : MonoBehaviour
         );
 
         transform.Translate(movement * Time.fixedDeltaTime, Space.World);
+
+        if (transform.position.z < -20.0f) { Destroy(gameObject); }
     }
 
     void OnTriggerEnter(Collider other)
