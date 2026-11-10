@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        StartCoroutine(SpawnRandomly());
+        
     }
 
     // Update is called once per frame
@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
     void FixedUpdate() {
         if(gameOver) return;
         
+        StartCoroutine(SpawnRandomly());
     }
 
     IEnumerator SpawnRandomly()

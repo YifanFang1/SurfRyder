@@ -3,7 +3,7 @@ using UnityEngine;
 public class SunScript : MonoBehaviour
 {
     [SerializeField] GameObject light;
-    GameObject player;
+    GameObject playerRef;
     [SerializeField] float radius;
     [SerializeField] float radiualSpeed;
 
@@ -13,7 +13,7 @@ public class SunScript : MonoBehaviour
     void Awake()
     {
         lightOrientation = light.transform;
-        player = GameManager.gameManager.player;
+        playerRef = GameManager.gameManager.player;
     }
 
     // Update is called once per frame
