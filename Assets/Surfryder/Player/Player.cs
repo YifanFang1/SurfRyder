@@ -39,12 +39,29 @@ public class Player : MonoBehaviour
     InputAction boostAction, brakeAction, diveAction;
      
     [Header("Heat and Energy Meters")]
-    public bool isInSun; // assume this bool will state whether the player is in the sunlight 
+    public bool isInSun; // set by the sun raycast (Yifan's part)
 
-    // make a heat gauge : increases when in sun and boosting, decreases in shadow
-    // make a energy gauge : increases in sun, decreases in shadow and boosting
-    // make max capacity vars for each
-    // make increase and decrease rate vars for each
+    [Header("Heat Gauge")]
+    [SerializeField] float maxHeat = 100f;
+    [SerializeField] float heat = 0f;                 // current heat (watch in Inspector)
+    [SerializeField] float heatGainInSun = 8f;        // per second while in sunlight
+    [SerializeField] float heatLossInShade = 12f;     // per second while in shadow
+    [SerializeField] float boostHeatGain = 15f;       // extra per second while boosting
+
+    [Header("Energy Gauge")]
+    [SerializeField] float maxEnergy = 100f;
+    [SerializeField] float energy = 100f;             // current energy (watch in Inspector)
+    [SerializeField] float energyGainInSun = 10f;     // per second while in sunlight
+    [SerializeField] float energyLossInShade = 8f;    // per second while in shadow
+    [SerializeField] float boostEnergyCost = 12f;     // extra drain per second while boosting
+    [SerializeField] float collectibleEnergy = 25f;   // energy restored per collectible
+
+    public float Heat => heat;
+    public float Energy => energy;
+    public float MaxHeat => maxHeat;
+    public float MaxEnergy => maxEnergy;
+    public float HeatPercent => heat / maxHeat;       // 0..1, handy for UI bars
+    public float EnergyPercent => energy / maxEnergy; // 0..1, handy for UI bars
 
     void Awake()
     {
@@ -58,6 +75,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate() {
         GameManager manager = GameManager.gameManager;
+        if (manager.gameOver) return;
         
         IsGrounded();
         WaterPhysics();
@@ -71,6 +89,10 @@ public class Player : MonoBehaviour
             boosting = true;
         }
         else { boosting = false; }
+
+        HeatGauge();
+        EnergyGauge();
+        CheckMeters();
 
         manager.SetSideWaysSpeed(sidewaysVelocity);
         manager.SetForwardSpeed(forwardVelocity);
@@ -144,6 +166,47 @@ public class Player : MonoBehaviour
         }
     }
 
-    // void EnergyGauge() { update gauge values }
-    // void HeatGauge() { update gauge values }
+    // Heat: goes up in sun, down in shadow, boosting always adds heat
+    void HeatGauge()
+    {
+        float change = isInSun ? heatGainInSun : -heatLossInShade;
+        if (boosting) change += boostHeatGain;
+
+        heat = Mathf.Clamp(heat + change * Time.fixedDeltaTime, 0f, maxHeat);
+    }
+
+    // Energy: recharges in sun, drains in shadow, boosting costs extra
+    void EnergyGauge()
+    {
+        float change = isInSun ? energyGainInSun : -energyLossInShade;
+        if (boosting) change -= boostEnergyCost;
+
+        energy = Mathf.Clamp(energy + change * Time.fixedDeltaTime, 0f, maxEnergy);
+    }
+
+    // Overheat = explode, out of energy = power down. Both end the run.
+    void CheckMeters()
+    {
+        if (heat >= maxHeat)
+        {
+            Debug.Log("Overheated!");
+            GameManager.gameManager.GameOver();
+        }
+        else if (energy <= 0f)
+        {
+            Debug.Log("Out of energy!");
+            GameManager.gameManager.GameOver();
+        }
+    }
+
+    // Called by Collectible when the player picks one up
+    public void AddEnergy(float amount)
+    {
+        energy = Mathf.Clamp(energy + amount, 0f, maxEnergy);
+    }
+
+    public void CollectEnergy()
+    {
+        AddEnergy(collectibleEnergy);
+    }
 }

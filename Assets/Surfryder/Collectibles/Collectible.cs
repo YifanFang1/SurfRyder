@@ -53,6 +53,10 @@ public class Collectible : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             collected++;
+
+            Player player = other.GetComponentInParent<Player>();
+            if (player != null) player.CollectEnergy();
+
             Debug.Log("Collected: " +collected);
             Destroy(gameObject);
         }
