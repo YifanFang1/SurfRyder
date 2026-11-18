@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 
     [Header("Forward")]
     [SerializeField] float forwardSpeed;
+    public float ForwardSpeed => forwardSpeed;   // read-only for other scripts
     [SerializeField] float forwardAcceleration;
 
     [Header("Brakes")]

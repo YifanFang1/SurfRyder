@@ -1,24 +1,82 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SunScript : MonoBehaviour
 {
-    [SerializeField] GameObject light;
-    GameObject playerRef;
-    [SerializeField] float radius;
-    [SerializeField] float radiualSpeed;
+    [Header("References")]
+    [FormerlySerializedAs("light")]
+    [SerializeField] GameObject sunLight;      // child directional light
+    [SerializeField] LayerMask pillarMask;     // layer(s) that cast shadows
 
-    Transform lightOrientation;
+    [Header("Sun Position")]
+    [SerializeField] float radius = 100f;          // distance from the player
+    [FormerlySerializedAs("baseElevation")]
+    [SerializeField] float startElevation = 35f;   // degrees above the horizon at start
+    [SerializeField] float maxElevation = 60f;     // highest the sun can climb
+    [SerializeField] float minElevation = -15f;    // lowest it can sink (so boosting can recover it)
+    [SerializeField] float horizonElevation = 0f;  // at or below this the sun is set (light hidden)
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
+    [Header("Sun Motion")]
+    [SerializeField] float sinkRate = 2f;          // degrees/sec the sun constantly sinks
+    [SerializeField] float risePerSpeed = 0.5f;    // degrees/sec gained per unit of speed above cruising
+
+    Transform playerTransform;
+    Player player;
+    float elevation;
+
+    void Start()
     {
-        lightOrientation = light.transform;
-        playerRef = GameManager.gameManager.player;
+        GameObject playerObj = GameManager.gameManager.player;
+        playerTransform = playerObj.transform;
+        player = playerObj.GetComponent<Player>();
+        elevation = startElevation;
+
+        if (pillarMask.value == -1)
+            Debug.LogWarning("SunScript: Pillar Mask is set to Everything, so the ray hits the player/water/obstacles and isInSun will always be false. Set it to the Pillar layer only.", this);
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (GameManager.gameManager.gameOver) return;
+
+        // 1. Constant sinking, pushed back up only when going faster than cruising speed.
+        float speedAboveCruise = Mathf.Max(0f, GameManager.gameManager.forwardVelocity - player.ForwardSpeed);
+        float rate = -sinkRate + speedAboveCruise * risePerSpeed;   // degrees/sec
+        elevation = Mathf.Clamp(elevation + rate * Time.fixedDeltaTime, minElevation, maxElevation);
+
+        // 2. Place the sun on a vertical arc straight ahead of the player.
+        float rad = elevation * Mathf.Deg2Rad;
+        Vector3 p = playerTransform.position;
+        transform.position = new Vector3(
+            p.x,
+            p.y + Mathf.Sin(rad) * radius,
+            p.z + Mathf.Cos(rad) * radius
+        );
+
+        // 3. Below the horizon: hide the light, player is in darkness.
+        bool belowHorizon = elevation <= horizonElevation;
+        sunLight.SetActive(!belowHorizon);
+
+        if (belowHorizon)
+        {
+            player.isInSun = false;
+            return;
+        }
+
+        // 4. Aim the light and check for pillar shadows.
+        sunLight.transform.LookAt(playerTransform);
+
+        Vector3 toPlayer = playerTransform.position - transform.position;
+        bool inShadow = Physics.Raycast(
+            transform.position,
+            toPlayer.normalized,
+            toPlayer.magnitude,
+            pillarMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        player.isInSun = !inShadow;
+
+        Debug.DrawRay(transform.position, toPlayer, inShadow ? Color.red : Color.yellow);
     }
 }

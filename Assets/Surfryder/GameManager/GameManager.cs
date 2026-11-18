@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEditorInternal;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float spawnWidth = 8.0f;
     [SerializeField] float obstacleChance = 0.5f;
 
+    [SerializeField] float minGap = 1.0f;
+    [SerializeField] float maxGap = 3.0f;
+
     [Header("GameState")]
     public bool gameOver = false;
 
@@ -34,7 +38,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        StartCoroutine(SpawnRandomly());
     }
 
     // Update is called once per frame
@@ -45,21 +49,29 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate() {
         if(gameOver) return;
-        
-        StartCoroutine(SpawnRandomly());
     }
 
     IEnumerator SpawnRandomly()
     {
+        float traveled = 0f;
+        float gap = Random.Range(minGap, maxGap);
+
         while (!gameOver)
         {
-            float waitTime = Random.Range(minSpawnTime, maxSpawnTime);
+            // float waitTime = Random.Range(minSpawnTime, maxSpawnTime) / (forwardVelocity);
 
-            yield return new WaitForSeconds(waitTime);
+            yield return new WaitForFixedUpdate();
 
             if (gameOver) yield break;
 
-            SpawnObject();
+            traveled += forwardVelocity * Time.fixedDeltaTime;
+
+            if (traveled >= gap)
+            {
+                SpawnObject();
+                traveled -= gap;
+                gap = Random.Range(minGap, maxGap);
+            }
         }
     }
 

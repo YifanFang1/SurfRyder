@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6012532491687269533}
   - component: {fileID: 4189956114628535735}
   - component: {fileID: 5216411697914914549}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ObstacleBasic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 3662468668304527418}
   - component: {fileID: 921197965960921922}
   - component: {fileID: 8578230281074895846}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
