@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Surfryder/Start and End Screens/Start Screen.unity
     guid: 279c288d11eb841ae99fc7884e96596d
   - enabled: 1
-    path: Assets/Surfryder/GameManager/Play Scene.unity
+    path: Assets/Surfryder/Main Scene/Play Scene.unity
     guid: 78135cd3a314145a0ab7c433f9997620
   - enabled: 1
     path: Assets/Surfryder/Start and End Screens/End Screen.unity

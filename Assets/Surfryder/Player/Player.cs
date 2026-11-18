@@ -156,15 +156,10 @@ public class Player : MonoBehaviour
     }
 
     void Steer()
-    {   
-        if(Mathf.Abs(sidewaysVelocity) < sidewaysSpeed)
-        {
-            sidewaysVelocity += leftRight * sidewaysAcceleration;
-        }
-        if (leftRight == 0)
-        {
-            sidewaysVelocity += Math.Sign(-sidewaysVelocity) * sidewaysAcceleration;
-        }
+    {
+        // Move toward the target sideways speed (0 when no input). Handles start, stop and reversing.
+        float target = leftRight * sidewaysSpeed;
+        sidewaysVelocity = Mathf.MoveTowards(sidewaysVelocity, target, sidewaysAcceleration);
     }
 
     // Heat: goes up in sun, down in shadow, boosting always adds heat

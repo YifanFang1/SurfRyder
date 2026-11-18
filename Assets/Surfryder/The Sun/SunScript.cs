@@ -74,7 +74,7 @@ public class SunScript : MonoBehaviour
             out RaycastHit hit,
             toPlayer.magnitude,
             pillarMask,
-            QueryTriggerInteraction.Ignore
+            QueryTriggerInteraction.Collide   // building colliders are triggers; the mask already limits what counts
         );
 
         // Debug: log whenever the shadow state flips, and what blocked the sun.
