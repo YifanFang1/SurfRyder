@@ -23,6 +23,7 @@ public class SunScript : MonoBehaviour
     Transform playerTransform;
     Player player;
     float elevation;
+    bool wasInShadow;
 
     void Start()
     {
@@ -70,10 +71,20 @@ public class SunScript : MonoBehaviour
         bool inShadow = Physics.Raycast(
             transform.position,
             toPlayer.normalized,
+            out RaycastHit hit,
             toPlayer.magnitude,
             pillarMask,
             QueryTriggerInteraction.Ignore
         );
+
+        // Debug: log whenever the shadow state flips, and what blocked the sun.
+        if (inShadow != wasInShadow)
+        {
+            Debug.Log(inShadow
+                ? $"SunScript: SHADOW from '{hit.collider.name}' (layer {LayerMask.LayerToName(hit.collider.gameObject.layer)})"
+                : "SunScript: back in sun");
+            wasInShadow = inShadow;
+        }
 
         player.isInSun = !inShadow;
 
