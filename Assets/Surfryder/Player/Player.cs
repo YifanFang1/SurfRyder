@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
     [Header("Turning")]
     [SerializeField] float sidewaysSpeed;
     [SerializeField] float sidewaysAcceleration;
+    [SerializeField] float maxSideAngle;
+    [SerializeField] float tiltSpeed;
 
     [Header("Jump")]
     [SerializeField] float jumpForce;
@@ -82,6 +84,7 @@ public class Player : MonoBehaviour
         WaterPhysics();
         MoveForward();
         Steer();
+        Tilt();
 
         if(brakeAction.IsPressed()) {Braking();}
         
@@ -141,7 +144,18 @@ public class Player : MonoBehaviour
             rb.AddForce(Vector3.up * bouyantForce, ForceMode.Force);
         }
     }
-    
+
+    void Tilt()
+    {
+        // Bank into the turn while steering (right input rolls clockwise = negative Z), self-right with no input.
+        float targetZ = -leftRight * maxSideAngle;
+
+        Vector3 euler = transform.eulerAngles;
+        float newZ = Mathf.MoveTowardsAngle(euler.z, targetZ, tiltSpeed * Time.fixedDeltaTime);
+
+        transform.rotation = Quaternion.Euler(euler.x, euler.y, newZ);
+    }
+
     void MoveForward()
     {
         if (forwardVelocity < forwardSpeed)
