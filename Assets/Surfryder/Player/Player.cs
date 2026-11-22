@@ -30,6 +30,16 @@ public class Player : MonoBehaviour
     [SerializeField] float maxSideAngle;
     [SerializeField] float tiltSpeed;
 
+    [Header("Buoyancy Point (physics only)")]
+    [SerializeField] float pivotOffset = 0f;      // the water is felt this far BELOW the transform; nothing visual or collider-related moves
+
+    [Header("Brake Flaps")]
+    [SerializeField] Transform leftFlapPivot;     // auto-found by name if left empty
+    [SerializeField] Transform rightFlapPivot;
+    [SerializeField] float flapOpenAngle = 60f;   // degrees the flaps lift while braking
+    [SerializeField] float flapSpeed = 240f;      // degrees per second
+    [SerializeField] float turnFlapAngle = 15f;   // small lift of the inside flap while steering
+
     [Header("Jump")]
     [SerializeField] float jumpForce;
 
@@ -69,6 +79,9 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+
+        if (leftFlapPivot == null) leftFlapPivot = FindChildByName("PivotLeft");
+        if (rightFlapPivot == null) rightFlapPivot = FindChildByName("PivotRight");
         playerInput = GetComponent<PlayerInput>();
 
         boostAction = playerInput.actions["Boost"];
@@ -86,7 +99,9 @@ public class Player : MonoBehaviour
         Steer();
         Tilt();
 
-        if(brakeAction.IsPressed()) {Braking();}
+        bool braking = brakeAction.IsPressed();
+        if (braking) {Braking();}
+        UpdateBrakeFlaps(braking);
         
         if(boostAction.IsPressed()) {
             Boost();
@@ -132,17 +147,53 @@ public class Player : MonoBehaviour
 
     void IsGrounded()
     {
-        isGrounded = ((Mathf.Abs(transform.position.y)) < 1f);
+        float surface = WaterFloor.SurfaceAt(transform.position) + pivotOffset;   // measured at the buoyancy point below the transform
+        isGrounded = Mathf.Abs(transform.position.y - surface) < 1f;
     }
 
     void WaterPhysics()
     {
-        if(transform.position.y < -0.01f)
+        // Float on the actual wave height under the skimmer (0 if there is no water floor).
+        float depth = WaterFloor.SurfaceAt(transform.position) + pivotOffset - transform.position.y;
+
+        if(depth > 0.01f)
         {
-            float bouyantForce = -transform.position.y * bouyantConstant - bouyantDamping * rb.linearVelocity.y;
+            float bouyantForce = depth * bouyantConstant - bouyantDamping * rb.linearVelocity.y;
 
             rb.AddForce(Vector3.up * bouyantForce, ForceMode.Force);
         }
+    }
+
+    // Lifts the flap pivots upward (rotation about local X raises the flap's trailing edge).
+    // Braking opens both flaps fully; steering lifts only the inside flap a little (like an airbrake).
+    void UpdateBrakeFlaps(bool braking)
+    {
+        float steer = sidewaysSpeed > 0.001f ? Mathf.Clamp(sidewaysVelocity / sidewaysSpeed, -1f, 1f) : 0f;
+
+        // Steering right (steer > 0) lifts the right flap; steering left lifts the left one.
+        float leftTurn  = Mathf.Max(0f, -steer) * turnFlapAngle;
+        float rightTurn = Mathf.Max(0f,  steer) * turnFlapAngle;
+
+        float leftAngle  = braking ? flapOpenAngle : leftTurn;
+        float rightAngle = braking ? flapOpenAngle : rightTurn;
+
+        float step = flapSpeed * Time.fixedDeltaTime;
+
+        if (leftFlapPivot != null)
+            leftFlapPivot.localRotation = Quaternion.RotateTowards(leftFlapPivot.localRotation, Quaternion.Euler(leftAngle, 0f, 0f), step);
+        if (rightFlapPivot != null)
+            rightFlapPivot.localRotation = Quaternion.RotateTowards(rightFlapPivot.localRotation, Quaternion.Euler(rightAngle, 0f, 0f), step);
+    }
+
+    // Finds a child by name, ignoring spaces and case ("Pivot Right" matches "PivotRight").
+    Transform FindChildByName(string wanted)
+    {
+        foreach (Transform t in GetComponentsInChildren<Transform>(true))
+        {
+            if (t.name.Replace(" ", "").Equals(wanted, StringComparison.OrdinalIgnoreCase))
+                return t;
+        }
+        return null;
     }
 
     void Tilt()

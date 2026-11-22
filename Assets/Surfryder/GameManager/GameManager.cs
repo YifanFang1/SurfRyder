@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
@@ -112,8 +113,20 @@ public class GameManager : MonoBehaviour
         forwardVelocity = input;
     }
 
+    [Header("Game Over")]
+    [SerializeField] string endSceneName = "End Screen";
+    [SerializeField] float endScreenDelay = 1.5f;   // seconds to let the loss sink in before switching
+
     public void GameOver()
     {
+        if (gameOver) return;   // only trigger once (obstacle and meter checks can both fire)
         gameOver = true;
+        StartCoroutine(LoadEndScreen());
+    }
+
+    IEnumerator LoadEndScreen()
+    {
+        yield return new WaitForSecondsRealtime(endScreenDelay);
+        SceneManager.LoadScene(endSceneName);
     }
 }

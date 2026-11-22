@@ -71,9 +71,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0127d1cee2b434e06951e861fa2659e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collectible
-  spinSpeed: 90
-  bobHeight: 0.3
-  bobSpeed: 2
+  spinSpeed: 40
+  bobHeight: 0.15
+  bobSpeed: 1.5
   visual: {fileID: 8762702661746853257}
   forwardVelocity: 0
   sidewaysVelocity: 0

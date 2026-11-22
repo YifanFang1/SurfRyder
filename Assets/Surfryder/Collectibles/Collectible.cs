@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
-    [SerializeField] float spinSpeed = 90f;
-    [SerializeField] float bobHeight = 0.3f;
-    [SerializeField] float bobSpeed = 2f;
+    [SerializeField] float spinSpeed = 40f;     // degrees per second (slow)
+    [SerializeField] float bobHeight = 0.15f;   // small up/down bob
+    [SerializeField] float bobSpeed = 1.5f;
     [SerializeField] Transform visual;
 
     public static int collected = 0;
@@ -14,11 +14,13 @@ public class Collectible : MonoBehaviour
     [SerializeField] float sidewaysVelocity;
 
     Vector3 visualStartPos;
+    float bobPhase;   // random offset so collectibles don't all bob in sync
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         visualStartPos = visual.localPosition;
+        bobPhase = Random.value * Mathf.PI * 2f;
     }
 
     // Update is called once per frame
@@ -27,7 +29,7 @@ public class Collectible : MonoBehaviour
         if (GameManager.gameManager.gameOver) return;
 
         visual.Rotate(Vector3.up, spinSpeed*Time.deltaTime, Space.World);
-        visual.localPosition = visualStartPos + Vector3.up*Mathf.Sin(Time.time*bobSpeed)*bobHeight;
+        visual.localPosition = visualStartPos + Vector3.up*Mathf.Sin(Time.time*bobSpeed + bobPhase)*bobHeight;
     }
 
     void FixedUpdate()

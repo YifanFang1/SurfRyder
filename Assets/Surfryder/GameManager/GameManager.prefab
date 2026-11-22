@@ -53,8 +53,10 @@ MonoBehaviour:
   minSpawnTime: 0.25
   maxSpawnTime: 1
   spawnDistance: 200
-  spawnWidth: 100
+  spawnWidth: 400
   obstacleChance: 0.8
   minGap: 5
   maxGap: 15
   gameOver: 0
+  endSceneName: End Screen
+  endScreenDelay: 1.5
