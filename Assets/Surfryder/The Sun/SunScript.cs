@@ -68,21 +68,34 @@ public class SunScript : MonoBehaviour
         sunLight.transform.LookAt(playerTransform);
 
         Vector3 toPlayer = playerTransform.position - transform.position;
-        bool inShadow = Physics.Raycast(
-            transform.position,
-            toPlayer.normalized,
-            out RaycastHit hit,
-            toPlayer.magnitude,
-            pillarMask,
-            QueryTriggerInteraction.Collide   // building colliders are triggers; the mask already limits what counts
-        );
+        Vector3 dir = toPlayer.normalized;
+        float dist = toPlayer.magnitude;
+
+        // 1. Physics colliders on the mask layer (pillars, etc.).
+        string blocker = null;
+        if (Physics.Raycast(transform.position, dir, out RaycastHit hit, dist, pillarMask, QueryTriggerInteraction.Collide))
+            blocker = hit.collider.name;
+
+        // 2. Visible building meshes: their bounds match the shadow the sun actually casts on the water.
+        if (blocker == null)
+        {
+            Ray ray = new Ray(transform.position, dir);
+            foreach (Obstacle obstacle in Obstacle.Active)
+            {
+                if (obstacle != null && obstacle.BlocksRay(ray, dist))
+                {
+                    blocker = obstacle.name;
+                    break;
+                }
+            }
+        }
+
+        bool inShadow = blocker != null;
 
         // Debug: log whenever the shadow state flips, and what blocked the sun.
         if (inShadow != wasInShadow)
         {
-            Debug.Log(inShadow
-                ? $"SunScript: SHADOW from '{hit.collider.name}' (layer {LayerMask.LayerToName(hit.collider.gameObject.layer)})"
-                : "SunScript: back in sun");
+            Debug.Log(inShadow ? $"SunScript: SHADOW from '{blocker}'" : "SunScript: back in sun");
             wasInShadow = inShadow;
         }
 

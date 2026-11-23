@@ -102,7 +102,9 @@ public class GameManager : MonoBehaviour
 
         Vector3 spawnPosition = new Vector3(player.transform.position.x + randomX, prefab.transform.position.y, player.transform.position.z + spawnDistance);
 
-        Instantiate(prefab, spawnPosition, prefab.transform.rotation);
+        // Random spin around the world's Y axis, applied on top of the prefab's own rotation.
+        Quaternion randomYaw = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
+        Instantiate(prefab, spawnPosition, randomYaw * prefab.transform.rotation);
     }
 
     public void SetSideWaysSpeed(float input) {

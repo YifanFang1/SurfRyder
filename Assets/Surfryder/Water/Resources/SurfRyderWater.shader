@@ -18,6 +18,9 @@ Shader "SurfRyder/Water"
         _GlintStrength ("Sun Glint", Float) = 1.0
         _DarkLevel ("Brightness With No Sun", Range(0, 1)) = 0.35
 
+        _CalmRadius ("Flat Water Radius Under Skimmer", Float) = 2.5
+        _ShadowDarkness ("Shadow Brightness (0 = black)", Range(0, 1)) = 0.45
+
         _RippleRadius ("Skimmer Ripple Radius", Float) = 4
         _WakeWidth ("Wake Start Width", Float) = 1.2
         _WakeSpread ("Wake Spread", Float) = 0.25
@@ -39,6 +42,8 @@ Shader "SurfRyder/Water"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -58,6 +63,8 @@ Shader "SurfRyder/Water"
                 float _FoamSpeed;
                 float _GlintStrength;
                 float _DarkLevel;
+                float _CalmRadius;
+                float _ShadowDarkness;
                 float _RippleRadius;
                 float _WakeWidth;
                 float _WakeSpread;
@@ -68,6 +75,8 @@ Shader "SurfRyder/Water"
             float4 _SkimmerPos;   // xyz = skimmer world position, w = speed ratio (1 = cruising)
             float4 _WaterScroll;  // xy = how far the world has slid past (x sideways, y forward)
             float _WaterTime;     // shared wave clock so the C# physics samples the same waves
+            float4 _Ripples[4];   // jump/landing ripples: xy = origin (pattern space), z = start time, w = amplitude (0 = unused)
+            float4 _RippleParams; // x = speed, y = wavelength, z = decay per second, w = packet half-width
 
             struct Attributes
             {
@@ -119,6 +128,28 @@ Shader "SurfRyder/Water"
                 return lerp(lerp(a, b, u.x), lerp(c, d, u.x), u.y);
             }
 
+            // Sum of expanding sine-wave rings sent out by jumps and landings.
+            float RippleHeight(float2 p)
+            {
+                float sum = 0.0;
+                [unroll]
+                for (int i = 0; i < 4; i++)
+                {
+                    float4 rp = _Ripples[i];
+                    float age = _WaterTime - rp.z;
+                    if (rp.w > 0.0 && age > 0.0)
+                    {
+                        float r = distance(p, rp.xy);
+                        float d = r - age * _RippleParams.x;                  // distance from the moving wave front
+                        float packet = saturate(1.0 - abs(d) / max(_RippleParams.w, 0.01));
+                        float wave = sin(d * WATER_TAU / max(_RippleParams.y, 0.01));
+                        float fade = exp(-age * _RippleParams.z) / (1.0 + r * 0.15);
+                        sum += rp.w * packet * packet * wave * fade;
+                    }
+                }
+                return sum;
+            }
+
             Varyings vert(Attributes IN)
             {
                 Varyings OUT;
@@ -129,7 +160,17 @@ Shader "SurfRyder/Water"
                 float2 grad;
                 Waves(p, h, grad);
 
-                // No calming near the skimmer: the physics floats on these exact waves.
+                // Flat water right under the skimmer: blend toward the wave height AT the skimmer,
+                // so the physics (which samples that same height) still matches what you see.
+                float hc;
+                float2 gc;
+                Waves(_SkimmerPos.xz + _WaterScroll.xy, hc, gc);
+                float calm = smoothstep(0.0, max(_CalmRadius, 0.01), distance(ws.xz, _SkimmerPos.xz));
+                h = lerp(hc, h, calm);
+                grad *= calm;
+
+                // Jump and landing ripples deform the surface on top of that (even under the skimmer).
+                h += RippleHeight(p);
                 ws.y += h;
 
                 OUT.positionWS = ws;
@@ -184,12 +225,14 @@ Shader "SurfRyder/Water"
                 foam = saturate(max(foam * 0.9, max(wake, ripple)));
                 col = lerp(col, _FoamColor.rgb, foam);
 
-                // ---- Sun: glint on the waves, and darker water when the sun light is switched off
-                Light mainLight = GetMainLight();
+                // ---- Sun: shadows from buildings, glint on the waves, and darker water when the sun light is off
+                float4 shadowCoord = TransformWorldToShadowCoord(ws);
+                Light mainLight = GetMainLight(shadowCoord);
                 float sun = saturate(dot(mainLight.color.rgb, float3(0.30, 0.59, 0.11)));
                 float3 H = normalize(mainLight.direction + V);
-                float spec = pow(saturate(dot(N, H)), 120.0) * _GlintStrength;
+                float spec = pow(saturate(dot(N, H)), 120.0) * _GlintStrength * mainLight.shadowAttenuation;
                 col *= lerp(_DarkLevel, 1.0, sun);
+                col *= lerp(_ShadowDarkness, 1.0, mainLight.shadowAttenuation);
                 col += spec * mainLight.color.rgb;
 
                 return half4(col, 1.0);

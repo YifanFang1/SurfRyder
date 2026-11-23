@@ -54,6 +54,9 @@ MonoBehaviour:
   sidewaysVelocity: 0
   leftRight: 0
   isGrounded: 0
+  steerAmount: 0
+  leftFlapAngle: 0
+  rightFlapAngle: 0
   forwardSpeed: 100
   forwardAcceleration: 0.5
   brakeSpeed: 30
@@ -64,13 +67,20 @@ MonoBehaviour:
   sidewaysSpeed: 20
   sidewaysAcceleration: 1
   maxSideAngle: 15
-  tiltSpeed: 100
+  tiltSpeed: 50
+  tiltPivotDrop: 2
   pivotOffset: 2.75
   leftFlapPivot: {fileID: 9094377413989435765}
   rightFlapPivot: {fileID: 8529933740893746999}
   flapOpenAngle: 60
   flapSpeed: 240
-  turnFlapAngle: 15
+  turnFlapAngle: 30
+  turnFlapSpeed: 1000
+  brakeHeatVent: 6
+  jumpRippleStrength: 0.35
+  landRippleStrength: 0.7
+  landRippleMinSpeed: 1
+  landRippleMaxSpeed: 8
   jumpForce: 10
   bouyantConstant: 15
   bouyantDamping: 5
@@ -162,8 +172,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4, y: 1.560852, z: 4.635834}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.4, y: 2.20898, z: 4.635834}
+  m_Center: {x: 0, y: -0.32406408, z: 0}
 --- !u!1 &1225550440081711637
 GameObject:
   m_ObjectHideFlags: 0

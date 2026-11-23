@@ -7,6 +7,16 @@ public class WaterFloor : MonoBehaviour
     [SerializeField] float waveLength = 22f;
     [SerializeField] float waveSpeed = 1.0f;
 
+    [Header("Under the Skimmer")]
+    [SerializeField] float calmRadius = 2.5f;      // water is flat within this distance of the skimmer
+
+    [Header("Jump / Landing Ripples")]
+    [SerializeField] float rippleSpeed = 9f;       // how fast the ring expands (units/sec)
+    [SerializeField] float rippleWavelength = 8f;  // distance between crests in the ring
+    [SerializeField] float rippleDecay = 0.6f;     // how quickly it fades (per second)
+    [SerializeField] float rippleWidth = 12f;      // half-width of the traveling wave packet
+    [SerializeField] float rippleLifetime = 6f;
+
     [Header("Mesh")]
     [SerializeField] float size = 500f;        // width/length of the water plane
     [SerializeField] int quads = 160;          // grid resolution (160 x 160 quads)
@@ -19,6 +29,12 @@ public class WaterFloor : MonoBehaviour
 
     public static WaterFloor Instance { get; private set; }
 
+    const int MaxRipples = 4;
+    readonly Vector4[] ripples = new Vector4[MaxRipples];   // xy origin (pattern space), z start time, w amplitude
+    int nextRipple;
+
+    static readonly int RipplesId = Shader.PropertyToID("_Ripples");
+    static readonly int RippleParamsId = Shader.PropertyToID("_RippleParams");
     static readonly int WaterTimeId = Shader.PropertyToID("_WaterTime");
     static readonly int SkimmerPosId = Shader.PropertyToID("_SkimmerPos");
     static readonly int WaterScrollId = Shader.PropertyToID("_WaterScroll");
@@ -64,6 +80,7 @@ public class WaterFloor : MonoBehaviour
         material.SetFloat("_WaveAmp", waveAmplitude);
         material.SetFloat("_WaveLength", waveLength);
         material.SetFloat("_WaveSpeed", waveSpeed);
+        material.SetFloat("_CalmRadius", calmRadius);
         if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", new Color(0.1f, 0.4f, 0.8f));
 
         var mr = gameObject.AddComponent<MeshRenderer>();
@@ -128,6 +145,12 @@ public class WaterFloor : MonoBehaviour
                 speedRatio = gm.forwardVelocity / playerScript.ForwardSpeed;
         }
 
+        // Retire finished ripples, then upload the rest.
+        for (int i = 0; i < MaxRipples; i++)
+            if (ripples[i].w > 0f && Time.time - ripples[i].z > rippleLifetime) ripples[i].w = 0f;
+
+        Shader.SetGlobalVectorArray(RipplesId, ripples);
+        Shader.SetGlobalVector(RippleParamsId, new Vector4(rippleSpeed, rippleWavelength, rippleDecay, rippleWidth));
         Shader.SetGlobalFloat(WaterTimeId, Time.time);
         Shader.SetGlobalVector(WaterScrollId, new Vector4(scroll.x, scroll.y, 0f, 0f));
         Shader.SetGlobalVector(SkimmerPosId, new Vector4(player.position.x, player.position.y, player.position.z, speedRatio));
@@ -149,6 +172,19 @@ public class WaterFloor : MonoBehaviour
     static readonly float[] WaveLenScale = { 1.00f, 0.60f, 0.37f };
     static readonly float[] WaveAmpScale = { 1.00f, 0.55f, 0.30f };
     static readonly float[] WaveSpeedScale = { 1.0f, 1.3f, 1.7f };
+
+    // Starts a sine-wave ring spreading out from a world position (jump or landing splash).
+    public void AddRipple(Vector3 worldPosition, float amplitude)
+    {
+        // Stored in "pattern space" so the ring drifts with the world like everything else.
+        ripples[nextRipple] = new Vector4(worldPosition.x + scroll.x, worldPosition.z + scroll.y, Time.time, amplitude);
+        nextRipple = (nextRipple + 1) % MaxRipples;
+    }
+
+    public static void Splash(Vector3 worldPosition, float amplitude)
+    {
+        if (Instance != null) Instance.AddRipple(worldPosition, amplitude);
+    }
 
     public float HeightAt(float x, float z)
     {

@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     [SerializeField] float sidewaysVelocity;
     [SerializeField] float leftRight = 0.0f;
     [SerializeField] bool isGrounded;
+    [SerializeField] float steerAmount;      // -1..1: sideways velocity / max sideways speed (drives the turn flaps)
+    [SerializeField] float leftFlapAngle;    // current flap angles in degrees (should change when you steer or brake)
+    [SerializeField] float rightFlapAngle;
 
     [Header("Forward")]
     [SerializeField] float forwardSpeed;
@@ -30,6 +33,9 @@ public class Player : MonoBehaviour
     [SerializeField] float maxSideAngle;
     [SerializeField] float tiltSpeed;
 
+    [Header("Tilt Pivot")]
+    [SerializeField] float tiltPivotDrop = 0.6f;  // the bank rotates around a point this far BELOW the transform
+
     [Header("Buoyancy Point (physics only)")]
     [SerializeField] float pivotOffset = 0f;      // the water is felt this far BELOW the transform; nothing visual or collider-related moves
 
@@ -39,6 +45,14 @@ public class Player : MonoBehaviour
     [SerializeField] float flapOpenAngle = 60f;   // degrees the flaps lift while braking
     [SerializeField] float flapSpeed = 240f;      // degrees per second
     [SerializeField] float turnFlapAngle = 15f;   // small lift of the inside flap while steering
+    [SerializeField] float turnFlapSpeed = 90f;   // degrees per second for the steering flap movement (slower than braking)
+    [SerializeField] float brakeHeatVent = 6f;    // heat vented per second while braking (slight)
+
+    [Header("Water Splashes")]
+    [SerializeField] float jumpRippleStrength = 0.35f;     // wave height sent out when jumping
+    [SerializeField] float landRippleStrength = 0.7f;      // wave height for a hard landing (scaled by impact speed)
+    [SerializeField] float landRippleMinSpeed = 1f;        // landings slower than this make no ripple
+    [SerializeField] float landRippleMaxSpeed = 8f;        // impact speed that gives the full strength
 
     [Header("Jump")]
     [SerializeField] float jumpForce;
@@ -49,6 +63,10 @@ public class Player : MonoBehaviour
     Rigidbody rb;
     PlayerInput playerInput;
     bool boosting = false;
+    bool braking = false;
+    bool wasGrounded = true;
+    float lastVerticalSpeed;
+    float currentRoll;   // degrees of bank we've applied so far
     InputAction boostAction, brakeAction, diveAction;
      
     [Header("Heat and Energy Meters")]
@@ -82,6 +100,8 @@ public class Player : MonoBehaviour
 
         if (leftFlapPivot == null) leftFlapPivot = FindChildByName("PivotLeft");
         if (rightFlapPivot == null) rightFlapPivot = FindChildByName("PivotRight");
+        if (leftFlapPivot == null || rightFlapPivot == null)
+            Debug.LogWarning("Player: a brake flap pivot was not found, so that flap will not move.", this);
         playerInput = GetComponent<PlayerInput>();
 
         boostAction = playerInput.actions["Boost"];
@@ -94,12 +114,13 @@ public class Player : MonoBehaviour
         if (manager.gameOver) return;
         
         IsGrounded();
+        CheckLanding();
         WaterPhysics();
         MoveForward();
         Steer();
         Tilt();
 
-        bool braking = brakeAction.IsPressed();
+        braking = brakeAction.IsPressed();
         if (braking) {Braking();}
         UpdateBrakeFlaps(braking);
         
@@ -125,6 +146,19 @@ public class Player : MonoBehaviour
     void OnJump() {
         if (!isGrounded) return;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        WaterFloor.Splash(transform.position, jumpRippleStrength);
+    }
+
+    // A hard landing sends a bigger sine-wave ring out across the water.
+    void CheckLanding()
+    {
+        if (isGrounded && !wasGrounded && lastVerticalSpeed < -landRippleMinSpeed)
+        {
+            float impact = Mathf.InverseLerp(landRippleMinSpeed, landRippleMaxSpeed, -lastVerticalSpeed);
+            WaterFloor.Splash(transform.position, landRippleStrength * Mathf.Max(0.3f, impact));
+        }
+        wasGrounded = isGrounded;
+        lastVerticalSpeed = rb.linearVelocity.y;
     }
 
     void Braking() {
@@ -177,12 +211,24 @@ public class Player : MonoBehaviour
         float leftAngle  = braking ? flapOpenAngle : leftTurn;
         float rightAngle = braking ? flapOpenAngle : rightTurn;
 
-        float step = flapSpeed * Time.fixedDeltaTime;
+        MoveFlap(leftFlapPivot, leftAngle, braking);
+        MoveFlap(rightFlapPivot, rightAngle, braking);
 
-        if (leftFlapPivot != null)
-            leftFlapPivot.localRotation = Quaternion.RotateTowards(leftFlapPivot.localRotation, Quaternion.Euler(leftAngle, 0f, 0f), step);
-        if (rightFlapPivot != null)
-            rightFlapPivot.localRotation = Quaternion.RotateTowards(rightFlapPivot.localRotation, Quaternion.Euler(rightAngle, 0f, 0f), step);
+        // Readouts so you can watch them in the Inspector while playing.
+        steerAmount = steer;
+        leftFlapAngle = leftFlapPivot != null ? Mathf.DeltaAngle(0f, leftFlapPivot.localEulerAngles.x) : 0f;
+        rightFlapAngle = rightFlapPivot != null ? Mathf.DeltaAngle(0f, rightFlapPivot.localEulerAngles.x) : 0f;
+    }
+
+    // Braking (and closing back down after braking) uses the fast flap speed; steering uses the slower turn flap speed.
+    void MoveFlap(Transform flap, float targetAngle, bool braking)
+    {
+        if (flap == null) return;
+
+        Quaternion target = Quaternion.Euler(targetAngle, 0f, 0f);
+        bool bigMove = braking || Quaternion.Angle(flap.localRotation, target) > turnFlapAngle * 1.5f;
+        float step = (bigMove ? flapSpeed : turnFlapSpeed) * Time.fixedDeltaTime;
+        flap.localRotation = Quaternion.RotateTowards(flap.localRotation, target, step);
     }
 
     // Finds a child by name, ignoring spaces and case ("Pivot Right" matches "PivotRight").
@@ -198,13 +244,21 @@ public class Player : MonoBehaviour
 
     void Tilt()
     {
-        // Bank into the turn while steering (right input rolls clockwise = negative Z), self-right with no input.
-        float targetZ = -leftRight * maxSideAngle;
+        // Bank into the turn (right input rolls clockwise = negative Z) and self-right with no input,
+        // rotating around a point BELOW the skimmer so it swings like a pendulum.
+        float targetRoll = -leftRight * maxSideAngle;
+        float newRoll = Mathf.MoveTowards(currentRoll, targetRoll, tiltSpeed * Time.fixedDeltaTime);
+        float delta = newRoll - currentRoll;
+        currentRoll = newRoll;
 
-        Vector3 euler = transform.eulerAngles;
-        float newZ = Mathf.MoveTowardsAngle(euler.z, targetZ, tiltSpeed * Time.fixedDeltaTime);
+        Vector3 pivot = transform.position - transform.up * tiltPivotDrop;
+        transform.RotateAround(pivot, transform.forward, delta);
+    }
 
-        transform.rotation = Quaternion.Euler(euler.x, euler.y, newZ);
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position - transform.up * tiltPivotDrop, 0.12f);
     }
 
     void MoveForward()
@@ -232,6 +286,7 @@ public class Player : MonoBehaviour
     {
         float change = isInSun ? heatGainInSun : -heatLossInShade;
         if (boosting) change += boostHeatGain;
+        if (braking) change -= brakeHeatVent;
 
         heat = Mathf.Clamp(heat + change * Time.fixedDeltaTime, 0f, maxHeat);
     }

@@ -318,6 +318,12 @@ MonoBehaviour:
   waveAmplitude: 0.6
   waveLength: 22
   waveSpeed: 1
+  calmRadius: 2.5
+  rippleSpeed: 9
+  rippleWavelength: 8
+  rippleDecay: 0.6
+  rippleWidth: 12
+  rippleLifetime: 6
   size: 500
   quads: 160
   surfaceY: -2.5
@@ -648,6 +654,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+--- !u!1001 &6941741953489805651
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 87.73415
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -14.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -157.21045
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391755547980584799, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4985675872024757898, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
+      propertyPath: m_Name
+      value: ObstacleBasic (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9bd3658b98eed4ee9a7154266c0dbb2c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -659,3 +722,4 @@ SceneRoots:
   - {fileID: 869354408}
   - {fileID: 1231831861}
   - {fileID: 1337022884}
+  - {fileID: 6941741953489805651}
