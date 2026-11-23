@@ -54,14 +54,14 @@ MonoBehaviour:
   sidewaysVelocity: 0
   leftRight: 0
   isGrounded: 0
-  forwardSpeed: 10
-  forwardAcceleration: 1
-  brakeSpeed: 5
-  brakeForce: 4
-  boostSpeed: 40
-  boostForce: 5
+  forwardSpeed: 100
+  forwardAcceleration: 0.5
+  brakeSpeed: 30
+  brakeForce: 1
+  boostSpeed: 150
+  boostForce: 2
   slowDownForce: 3
-  sidewaysSpeed: 10
+  sidewaysSpeed: 20
   sidewaysAcceleration: 1
   maxSideAngle: 15
   tiltSpeed: 100
@@ -77,14 +77,14 @@ MonoBehaviour:
   isInSun: 0
   maxHeat: 100
   heat: 0
-  heatGainInSun: 1
+  heatGainInSun: 0.5
   heatLossInShade: 12
   boostHeatGain: 5
   maxEnergy: 100
   energy: 100
   energyGainInSun: 10
-  energyLossInShade: 8
-  boostEnergyCost: 12
+  energyLossInShade: 4
+  boostEnergyCost: 9
   collectibleEnergy: 25
 --- !u!114 &1912942979310832380
 MonoBehaviour:

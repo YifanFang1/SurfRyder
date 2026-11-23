@@ -178,8 +178,8 @@ MonoBehaviour:
     m_Bits: 128
   radius: 100
   startElevation: 15
-  maxElevation: 30
-  minElevation: -15
+  maxElevation: 25
+  minElevation: -5
   horizonElevation: 0
-  sinkRate: 1
-  risePerSpeed: 0.1
+  sinkRate: 1.25
+  risePerSpeed: 0.04

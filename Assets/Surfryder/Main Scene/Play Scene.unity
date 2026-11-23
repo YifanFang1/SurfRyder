@@ -542,10 +542,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2407781037744167581, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
-      propertyPath: sinkRate
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 6090478654786654898, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -83.63137
@@ -646,18 +642,6 @@ PrefabInstance:
     - target: {fileID: 1037699047436240405, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
-      propertyPath: forwardSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
-      propertyPath: heatGainInSun
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6577337817236868518, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
-      propertyPath: boostEnergyCost
-      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
