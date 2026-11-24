@@ -123,6 +123,8 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver) return;   // only trigger once (obstacle and meter checks can both fire)
         gameOver = true;
+        var p = FindFirstObjectByType<Player>();
+        if (p != null) ParticleManager.Explosion(p.transform.position);
         StartCoroutine(LoadEndScreen());
     }
 

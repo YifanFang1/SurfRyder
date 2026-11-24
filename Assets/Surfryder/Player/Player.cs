@@ -103,6 +103,13 @@ public class Player : MonoBehaviour
     public float MaxEnergy => maxEnergy;
     public float HeatPercent => heat / maxHeat;       // 0..1, handy for UI bars
     public float EnergyPercent => energy / maxEnergy; // 0..1, handy for UI bars
+    public float ForwardVelocity => forwardVelocity;
+    public float SidewaysVelocity => sidewaysVelocity;
+    public bool IsBraking => braking;
+    public bool IsBoosting => boosting;
+    public bool OnWater => Mathf.Abs(transform.position.y - (WaterFloor.SurfaceAt(transform.position) + pivotOffset)) < 1f;
+    public Transform LeftFlapPivot => leftFlapPivot;
+    public Transform RightFlapPivot => rightFlapPivot;
 
     void Awake()
     {
@@ -171,6 +178,7 @@ public class Player : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         WaterFloor.Splash(transform.position, jumpRippleStrength);
         airborneFromJump = true;   // the splash sound waits until we come back down
+        ParticleManager.Splash(transform.position, jumpRippleStrength * 2f);
     }
 
     // A hard landing sends a bigger sine-wave ring out across the water.
@@ -180,6 +188,7 @@ public class Player : MonoBehaviour
         {
             float impact = Mathf.InverseLerp(landRippleMinSpeed, landRippleMaxSpeed, -lastVerticalSpeed);
             WaterFloor.Splash(transform.position, landRippleStrength * Mathf.Max(0.3f, impact));
+            ParticleManager.Splash(transform.position, Mathf.Clamp01(Mathf.Max(0.3f, impact)));
         }
 
         // Splash sound: only when we touch the water again, falling, after a jump
@@ -361,6 +370,7 @@ public class Player : MonoBehaviour
     {
         AddEnergy(collectibleEnergy);
         AudioManager.Instance.PlaySFX(AudioNames.ItemCollected);
+        ParticleManager.SparkBurst(transform.position + Vector3.up * 0.5f);
     }
 
     // ---------------------------------------------------------------- Sound helpers
