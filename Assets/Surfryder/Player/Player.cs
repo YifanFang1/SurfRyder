@@ -68,7 +68,17 @@ public class Player : MonoBehaviour
     float lastVerticalSpeed;
     float currentRoll;   // degrees of bank we've applied so far
     InputAction boostAction, brakeAction, diveAction;
-     
+
+    [Header("Sound")]
+    [SerializeField, Range(0f, 1f)] float overheatWarnPercent = 0.8f;   // warning alarm starts at this much heat
+    [SerializeField, Range(0f, 1f)] float lowEnergyWarnPercent = 0.2f;  // warning alarm starts at this little energy
+    // Track which loops we've started so we only talk to the AudioManager when something changes
+    bool skidPlaying = false;
+    bool boostPlaying = false;
+    bool overheatWarnPlaying = false;
+    bool lowPowerWarnPlaying = false;
+    bool airborneFromJump = false;   // true after pressing jump, until we splash back down onto the water
+
     [Header("Heat and Energy Meters")]
     public bool isInSun; // set by the sun raycast (Yifan's part)
 
@@ -109,10 +119,17 @@ public class Player : MonoBehaviour
         diveAction = playerInput.actions["Dive"];
     }
 
+    void Start()
+    {
+        // Background ambience. Safe to call again on scene reload: if it's already running it just fades back in.
+        AudioManager.Instance.PlayAmbience(AudioNames.OceanWaves, 2f);
+        AudioManager.Instance.PlayAmbience(AudioNames.WindWithRain, 2f);
+    }
+
     void FixedUpdate() {
         GameManager manager = GameManager.gameManager;
-        if (manager.gameOver) return;
-        
+        if (manager.gameOver) { StopAllLoopSounds(0.3f); return; }
+
         IsGrounded();
         CheckLanding();
         WaterPhysics();
@@ -120,10 +137,15 @@ public class Player : MonoBehaviour
         Steer();
         Tilt();
 
+        bool wasBraking = braking;
         braking = brakeAction.IsPressed();
         if (braking) {Braking();}
         UpdateBrakeFlaps(braking);
-        
+
+        // Brake screech: once, at the moment the brake is pressed, if we're actually on the water and moving fast enough
+        if (braking && !wasBraking && isGrounded && forwardVelocity > brakeSpeed)
+            AudioManager.Instance.PlaySFX(AudioNames.CarBrake);
+
         if(boostAction.IsPressed()) {
             Boost();
             boosting = true;
@@ -132,6 +154,7 @@ public class Player : MonoBehaviour
 
         HeatGauge();
         EnergyGauge();
+        UpdateLoopSounds();   // must come before CheckMeters so game over can silence them
         CheckMeters();
 
         manager.SetSideWaysSpeed(sidewaysVelocity);
@@ -147,6 +170,7 @@ public class Player : MonoBehaviour
         if (!isGrounded) return;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         WaterFloor.Splash(transform.position, jumpRippleStrength);
+        airborneFromJump = true;   // the splash sound waits until we come back down
     }
 
     // A hard landing sends a bigger sine-wave ring out across the water.
@@ -157,6 +181,14 @@ public class Player : MonoBehaviour
             float impact = Mathf.InverseLerp(landRippleMinSpeed, landRippleMaxSpeed, -lastVerticalSpeed);
             WaterFloor.Splash(transform.position, landRippleStrength * Mathf.Max(0.3f, impact));
         }
+
+        // Splash sound: only when we touch the water again, falling, after a jump
+        if (isGrounded && !wasGrounded && airborneFromJump && lastVerticalSpeed < 0f)
+        {
+            AudioManager.Instance.PlaySFX(AudioNames.WaterSplash);
+            airborneFromJump = false;
+        }
+
         wasGrounded = isGrounded;
         lastVerticalSpeed = rb.linearVelocity.y;
     }
@@ -306,11 +338,15 @@ public class Player : MonoBehaviour
         if (heat >= maxHeat)
         {
             Debug.Log("Overheated!");
+            StopAllLoopSounds(0.1f);
+            AudioManager.Instance.PlaySFX(AudioNames.Explosion);
             GameManager.gameManager.GameOver();
         }
         else if (energy <= 0f)
         {
             Debug.Log("Out of energy!");
+            StopAllLoopSounds(0.1f);
+            AudioManager.Instance.PlaySFX(AudioNames.PowerOff);
             GameManager.gameManager.GameOver();
         }
     }
@@ -324,5 +360,47 @@ public class Player : MonoBehaviour
     public void CollectEnergy()
     {
         AddEnergy(collectibleEnergy);
+        AudioManager.Instance.PlaySFX(AudioNames.ItemCollected);
+    }
+
+    // ---------------------------------------------------------------- Sound helpers
+
+    // Starts or stops one looping sound, but only when its state actually changes.
+    void SetLoopSound(string sound, bool shouldPlay, ref bool isPlaying, float fadeIn = 0.15f, float fadeOut = 0.2f)
+    {
+        if (AudioManager.Instance == null) return;
+
+        if (shouldPlay && !isPlaying)
+        {
+            AudioManager.Instance.PlayLoopSFX(sound, fadeIn);
+            isPlaying = true;
+        }
+        else if (!shouldPlay && isPlaying)
+        {
+            AudioManager.Instance.StopLoopSFX(sound, fadeOut);
+            isPlaying = false;
+        }
+    }
+
+    // Every physics frame, decide which loops should be running
+    void UpdateLoopSounds()
+    {
+        SetLoopSound(AudioNames.JetWaterSkidding, true, ref skidPlaying);   // always on, even while airborne
+        SetLoopSound(AudioNames.EngineBoost, boosting, ref boostPlaying, 0.1f, 0.3f);
+        SetLoopSound(AudioNames.OverheatingWarning, HeatPercent >= overheatWarnPercent, ref overheatWarnPlaying, 0.1f, 0.3f);
+        SetLoopSound(AudioNames.LowPowerWarning, EnergyPercent <= lowEnergyWarnPercent, ref lowPowerWarnPlaying, 0.1f, 0.3f);
+    }
+
+    void StopAllLoopSounds(float fade)
+    {
+        SetLoopSound(AudioNames.JetWaterSkidding, false, ref skidPlaying, 0.15f, fade);
+        SetLoopSound(AudioNames.EngineBoost, false, ref boostPlaying, 0.1f, fade);
+        SetLoopSound(AudioNames.OverheatingWarning, false, ref overheatWarnPlaying, 0.1f, fade);
+        SetLoopSound(AudioNames.LowPowerWarning, false, ref lowPowerWarnPlaying, 0.1f, fade);
+    }
+
+    void OnDestroy()
+    {
+        StopAllLoopSounds(0.1f);
     }
 }

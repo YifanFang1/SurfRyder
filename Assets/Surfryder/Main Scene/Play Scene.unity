@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 869354407}
   - component: {fileID: 869354406}
   - component: {fileID: 869354405}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,6 +337,112 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.16302, y: 0.78043, z: 1.58431}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1588275897
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1588275899}
+  - component: {fileID: 1588275898}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1588275898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588275897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b248d8245ca274ac5a84529c69df6908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicTracks: []
+  sfx:
+  - name: jet-water-skidding
+    clip: {fileID: 8300000, guid: 3f994210c5a934486b8fd1da16433953, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: engine-boost
+    clip: {fileID: 8300000, guid: 6fcdff0dfc1814eb59bef9f2d5850e6e, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: car-brake
+    clip: {fileID: 8300000, guid: a8a061fad091b4f7c919f40e12d46e5a, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: water-splash
+    clip: {fileID: 8300000, guid: b2d503047be414a1fa66e4cb0581b045, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: item-collected
+    clip: {fileID: 8300000, guid: 0defb2750a1744b709ff6d8599af2993, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: overheating-warning
+    clip: {fileID: 8300000, guid: 5008ed334bfa04cdc8a779408ece6965, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: low-power-warning
+    clip: {fileID: 8300000, guid: 6f0ebde7dde954736a5dda82d8071264, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: explosion
+    clip: {fileID: 8300000, guid: 9819ad26b4d4c4a31a1f4f50e6360351, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  - name: power-off
+    clip: {fileID: 8300000, guid: 4537336b9d6464c0098a0898806a65b1, type: 3}
+    volume: 1
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+  ambience: []
+  masterVolume: 1
+  musicVolume: 0.7
+  sfxVolume: 1
+  ambienceVolume: 0.6
+  sfxPoolSize: 12
+--- !u!4 &1588275899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588275897}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -35.34139, y: -8, z: 72.91747}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -723,3 +829,4 @@ SceneRoots:
   - {fileID: 1231831861}
   - {fileID: 1337022884}
   - {fileID: 6941741953489805651}
+  - {fileID: 1588275899}
