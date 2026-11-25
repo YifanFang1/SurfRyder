@@ -179,7 +179,9 @@ MonoBehaviour:
   radius: 100
   startElevation: 15
   maxElevation: 25
-  minElevation: -5
-  horizonElevation: 0
+  minElevation: -10
+  horizonElevation: -5
+  daySkybox: {fileID: 2100000, guid: b8e4068dd08fb4602af78dd615e9c0bb, type: 2}
+  nightSkybox: {fileID: 2100000, guid: 08588fe8b1f0347e580a13e22cc1427b, type: 2}
   sinkRate: 1.25
   risePerSpeed: 0.04

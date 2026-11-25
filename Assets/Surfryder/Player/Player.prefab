@@ -149,6 +149,8 @@ MonoBehaviour:
   jumpForce: 10
   bouyantConstant: 15
   bouyantDamping: 5
+  overheatWarnPercent: 0.8
+  lowEnergyWarnPercent: 0.2
   isInSun: 0
   maxHeat: 100
   heat: 0
@@ -9859,7 +9861,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6932810884399186041
 Transform:
   m_ObjectHideFlags: 0
@@ -9869,7 +9871,7 @@ Transform:
   m_GameObject: {fileID: 8487215021091893285}
   serializedVersion: 2
   m_LocalRotation: {x: 0.9993616, y: -0, z: -0, w: -0.035727654}
-  m_LocalPosition: {x: 0, y: -1.39, z: 0.43}
+  m_LocalPosition: {x: 0, y: -0.43, z: -1.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10129,11 +10131,29 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 3
       minMaxState: 0
-      scalar: 0
+      scalar: -2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
-        m_Curve: []
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -10218,7 +10238,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
     arc:
-      value: 180
+      value: 360
       mode: 0
       spread: 0
       speed:

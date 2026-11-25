@@ -20,13 +20,13 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0.33333337, b: 1, a: 1}
+  m_AmbientEquatorColor: {r: 1, g: 0.7532815, b: 0, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b8e4068dd08fb4602af78dd615e9c0bb, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 972008688}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -94,7 +94,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: bcf8d289adc6c4d06885c215af7d444d, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -237,6 +237,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!108 &972008688 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 5804264965711787523, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
+  m_PrefabInstance: {fileID: 957814731449324018}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1216348660
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,6 +383,18 @@ MonoBehaviour:
   rippleDecay: 0.6
   rippleWidth: 12
   rippleLifetime: 6
+  dayColors:
+    shallow: {r: 0.2, g: 0.78, b: 0.88, a: 1}
+    deep: {r: 0.03, g: 0.2, b: 0.5, a: 1}
+    foam: {r: 1, g: 1, b: 1, a: 1}
+  duskColors:
+    shallow: {r: 0.95, g: 0.55, b: 0.45, a: 1}
+    deep: {r: 0.25, g: 0.15, b: 0.38, a: 1}
+    foam: {r: 1, g: 0.9, b: 0.85, a: 1}
+  nightColors:
+    shallow: {r: 0.08, g: 0.16, b: 0.32, a: 1}
+    deep: {r: 0.01, g: 0.03, b: 0.11, a: 1}
+    foam: {r: 0.55, g: 0.65, b: 0.85, a: 1}
   size: 500
   quads: 160
   surfaceY: -2.5
@@ -708,6 +725,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2407781037744167581, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
+      propertyPath: duskSkybox
+      value: 
+      objectReference: {fileID: 2100000, guid: d90de5654fb3045b6b7d8052070d3ce8, type: 2}
+    - target: {fileID: 2407781037744167581, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
+      propertyPath: duskElevation
+      value: -3
+      objectReference: {fileID: 0}
     - target: {fileID: 6090478654786654898, guid: a93ffb5fdc1164c54ab401527f9bb7d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -83.63137
@@ -809,6 +834,70 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4306519273555968179, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4306519273555968179, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: InitialModule.gravityModifier.scalar
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_BurstCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].cycleCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].probability
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].repeatInterval
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minScalar
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.maxCurve.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minCurve.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.maxCurve.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minCurve.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.maxCurve.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648625785241718908, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minCurve.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8487215021091893285, guid: bcda85402eb844fd7ae719ddcfd6bc4f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -825,6 +914,5 @@ SceneRoots:
   - {fileID: 869354408}
   - {fileID: 1231831861}
   - {fileID: 1337022884}
-  - {fileID: 6941741953489805651}
   - {fileID: 1588275899}
   - {fileID: 1216348662}

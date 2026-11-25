@@ -17,6 +17,18 @@ public class WaterFloor : MonoBehaviour
     [SerializeField] float rippleWidth = 12f;      // half-width of the traveling wave packet
     [SerializeField] float rippleLifetime = 6f;
 
+    [System.Serializable]
+    public struct WaterPalette
+    {
+        public Color shallow, deep, foam;
+        public WaterPalette(Color shallow, Color deep, Color foam) { this.shallow = shallow; this.deep = deep; this.foam = foam; }
+    }
+
+    [Header("Time-of-Day Colors (blended by the sun's height, like the sky)")]
+    [SerializeField] WaterPalette dayColors = new WaterPalette(new Color(0.20f, 0.78f, 0.88f), new Color(0.03f, 0.20f, 0.50f), Color.white);
+    [SerializeField] WaterPalette duskColors = new WaterPalette(new Color(0.95f, 0.55f, 0.45f), new Color(0.25f, 0.15f, 0.38f), new Color(1f, 0.9f, 0.85f));
+    [SerializeField] WaterPalette nightColors = new WaterPalette(new Color(0.08f, 0.16f, 0.32f), new Color(0.01f, 0.03f, 0.11f), new Color(0.55f, 0.65f, 0.85f));
+
     [Header("Mesh")]
     [SerializeField] float size = 500f;        // width/length of the water plane
     [SerializeField] int quads = 160;          // grid resolution (160 x 160 quads)
@@ -26,6 +38,7 @@ public class WaterFloor : MonoBehaviour
     Player playerScript;
     Material material;
     Vector2 scroll;
+    SunScript sun;
 
     public static WaterFloor Instance { get; private set; }
 
@@ -145,6 +158,10 @@ public class WaterFloor : MonoBehaviour
                 speedRatio = gm.forwardVelocity / playerScript.ForwardSpeed;
         }
 
+        // Water color follows the time of day (0 night, 1 dusk, 2 day).
+        if (sun == null) sun = FindFirstObjectByType<SunScript>();
+        ApplyPalette(sun != null ? sun.SkyPhase : 2f);
+
         // Retire finished ripples, then upload the rest.
         for (int i = 0; i < MaxRipples; i++)
             if (ripples[i].w > 0f && Time.time - ripples[i].z > rippleLifetime) ripples[i].w = 0f;
@@ -154,6 +171,17 @@ public class WaterFloor : MonoBehaviour
         Shader.SetGlobalFloat(WaterTimeId, Time.time);
         Shader.SetGlobalVector(WaterScrollId, new Vector4(scroll.x, scroll.y, 0f, 0f));
         Shader.SetGlobalVector(SkimmerPosId, new Vector4(player.position.x, player.position.y, player.position.z, speedRatio));
+    }
+
+    void ApplyPalette(float phase)
+    {
+        if (material == null) return;
+        WaterPalette a = phase < 1f ? nightColors : duskColors;
+        WaterPalette b = phase < 1f ? duskColors : dayColors;
+        float t = phase < 1f ? phase : phase - 1f;
+        material.SetColor("_ShallowColor", Color.Lerp(a.shallow, b.shallow, t));
+        material.SetColor("_DeepColor", Color.Lerp(a.deep, b.deep, t));
+        material.SetColor("_FoamColor", Color.Lerp(a.foam, b.foam, t));
     }
 
     void OnDestroy()
